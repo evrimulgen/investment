@@ -14,12 +14,13 @@ public class AccountSnapshot {
   private LocalDate date;
   private double price;
   private double units;
-  private double principle;
   private double marketValue;
-  private double returnRate;
+  private double principle;
+  private double currentGainOrLoss;
+  private double previousGainOrLoss;
   private double totalInvestment;
   private double totalGainOrLoss;
-  private double currentGainOrLoss;
+  private double returnRate;
 
   public AccountSnapshot(
       LocalDate date,
@@ -30,7 +31,8 @@ public class AccountSnapshot {
       double marketValue,
       double returnRate,
       double totalInvestment,
-      double currentGainOrLoss) {
+      double currentGainOrLoss,
+      double previousGainOrLoss) {
     this.date = date;
     this.price = price;
     this.units = units;
@@ -40,5 +42,6 @@ public class AccountSnapshot {
     this.totalInvestment = totalInvestment;
     this.totalGainOrLoss = totalGainOrLoss;
     this.currentGainOrLoss = currentGainOrLoss;
+    this.previousGainOrLoss = previousGainOrLoss;
   }
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,10 +24,19 @@ import java.util.Objects;
 @Repository
 public class NasdaqRepository {
 
-  private final List<NasdaqPrice> prices = Lists.newArrayListWithExpectedSize(13000);
+  private List<NasdaqPrice> prices;
 
   @SneakyThrows
-  public NasdaqRepository() {
+  public List<NasdaqPrice> getNasdaqPrices() {
+    if (this.prices == null) {
+      loadPrices();
+    }
+
+    return prices;
+  }
+
+  private void loadPrices() throws IOException, URISyntaxException {
+    prices = Lists.newArrayListWithExpectedSize(13000);
     URL resource = getClass().getClassLoader().getResource("datasource.csv");
     CSVParser records =
         CSVFormat.DEFAULT
@@ -37,9 +48,5 @@ public class NasdaqRepository {
           double price = Double.parseDouble(record.get(4));
           prices.add(new NasdaqPrice(date, price));
         });
-  }
-
-  public List<NasdaqPrice> getNasdaqPrices() {
-    return prices;
   }
 }

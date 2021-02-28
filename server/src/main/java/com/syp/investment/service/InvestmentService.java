@@ -48,7 +48,7 @@ public class InvestmentService {
     List<AccountSnapshot> snapshots = Lists.newArrayListWithExpectedSize(totalDays);
 
     AccountSnapshot initSnapshot =
-        new AccountSnapshot(startDate.minusDays(1), 0, 0, 0, 0, 0, 0, 0, 0);
+        new AccountSnapshot(startDate.minusDays(1), 0, 0, 0, 0, 0, 0, 0, 0, 0);
     snapshots.add(initSnapshot);
 
     int finalIndex = 0;
@@ -132,8 +132,9 @@ public class InvestmentService {
         calculateTotalInvestment(yesterdaySnapshot.getTotalInvestment(), investmentPerMonth);
     double todayMarketValue = calculateMarketValue(todayUnits, todayPrice);
     double todayCurrentGainOrLoss = calculateCurrentGainOrLoss(yesterdaySnapshot, todayPrice);
-    double todayReturnRate =
-        calculateReturnRate(yesterdaySnapshot.getTotalGainOrLoss(), todayTotalInvestment);
+    double todayTotalGainOrLoss =
+        yesterdaySnapshot.getPreviousGainOrLoss() + todayCurrentGainOrLoss;
+    double todayReturnRate = calculateReturnRate(todayTotalGainOrLoss, todayTotalInvestment);
 
     AccountSnapshot todaySnapshot =
         new AccountSnapshot(
@@ -141,11 +142,12 @@ public class InvestmentService {
             todayPrice,
             todayUnits,
             todayPrinciple,
-            yesterdaySnapshot.getTotalGainOrLoss(),
+            todayTotalGainOrLoss,
             todayMarketValue,
             todayReturnRate,
             todayTotalInvestment,
-            todayCurrentGainOrLoss);
+            todayCurrentGainOrLoss,
+            yesterdaySnapshot.getPreviousGainOrLoss());
     snapshots.add(todaySnapshot);
     transactionMonths.add(currentMonth);
   }
@@ -175,7 +177,7 @@ public class InvestmentService {
 
   private double calculateTotalGainOrLoss(AccountSnapshot yesterdaySnapshot, double todayPrice) {
     double newGainOrLoss = calculateCurrentGainOrLoss(yesterdaySnapshot, todayPrice);
-    return newGainOrLoss + yesterdaySnapshot.getTotalGainOrLoss();
+    return newGainOrLoss + yesterdaySnapshot.getPreviousGainOrLoss();
   }
 
   private double calculateTotalInvestment(double yesterdayTotalInvestment, double todayInvestment) {
@@ -210,7 +212,8 @@ public class InvestmentService {
             0,
             returnRate,
             yesterdaySnapshot.getTotalInvestment(),
-            0);
+            0,
+            totalGainOrLoss);
     snapshots.add(todaySnapshot);
   }
 
@@ -221,10 +224,11 @@ public class InvestmentService {
     LocalDate today = todayNasdaqPrice.getDate();
 
     double todayMarketValue = calculateMarketValue(yesterdaySnapshot.getUnits(), todayPrice);
-    double todayReturnRate =
-        calculateReturnRate(
-            yesterdaySnapshot.getTotalGainOrLoss(), yesterdaySnapshot.getTotalInvestment());
     double todayCurrentGainOrLoss = calculateCurrentGainOrLoss(yesterdaySnapshot, todayPrice);
+    double todayTotalGainOrLoss =
+        yesterdaySnapshot.getPreviousGainOrLoss() + todayCurrentGainOrLoss;
+    double todayReturnRate =
+        calculateReturnRate(todayTotalGainOrLoss, yesterdaySnapshot.getTotalInvestment());
 
     AccountSnapshot todaySnapshot =
         new AccountSnapshot(
@@ -232,11 +236,12 @@ public class InvestmentService {
             todayPrice,
             yesterdaySnapshot.getUnits(),
             yesterdaySnapshot.getPrinciple(),
-            yesterdaySnapshot.getTotalGainOrLoss(),
+            todayTotalGainOrLoss,
             todayMarketValue,
             todayReturnRate,
             yesterdaySnapshot.getTotalInvestment(),
-            todayCurrentGainOrLoss);
+            todayCurrentGainOrLoss,
+            yesterdaySnapshot.getPreviousGainOrLoss());
     snapshots.add(todaySnapshot);
   }
 }
