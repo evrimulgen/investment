@@ -111,7 +111,7 @@ class App extends PureComponent {
     this.setState({ prices, returnRates });
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.updatePrices();
   }
 
