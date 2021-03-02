@@ -116,25 +116,22 @@ class App extends PureComponent {
   }
 
   render() {
-    if (!this.state.prices) {
+    const { startDate, endDate, prices, returnRates } = this.state;
+
+    if (!prices || !returnRates) {
       return null;
     }
 
     return (
       <Grid container>
         <DatesPicker
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
+          startDate={startDate}
+          endDate={endDate}
           handleStartDateChange={this.handleStartDateChange}
           handleEndDateChange={this.handleEndDateChange}
         />
-
-        <InstrumentChart prices={this.state.prices} />
-
-        <InvestmentChart
-          prices={this.state.prices}
-          returnRates={this.state.returnRates}
-        />
+        <InstrumentChart prices={prices} />
+        <InvestmentChart returnRates={returnRates} />
       </Grid>
     );
   }
