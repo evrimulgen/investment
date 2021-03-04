@@ -11,8 +11,8 @@ class App extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: new Date("2020-01-01"),
-      endDate: new Date("2020-12-31"),
+      startDate: new Date("2000-07-01"),
+      endDate: new Date("2012-02-01"),
     };
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -20,14 +20,14 @@ class App extends PureComponent {
   }
 
   handleStartDateChange(date) {
-    this.setState({ startDate: date }, () => this.updatePrices());
+    this.setState({ startDate: date }, () => this.updateData());
   }
 
   handleEndDateChange(date) {
-    this.setState({ endDate: date }, () => this.updatePrices());
+    this.setState({ endDate: date }, () => this.updateData());
   }
 
-  async updatePrices() {
+  async updateData() {
     if (
       !isValidDate(this.state.startDate) ||
       !isValidDate(this.state.endDate)
@@ -40,10 +40,10 @@ class App extends PureComponent {
     const prices = await getPrices(startDate, endDate);
 
     const maxProfitRate1 = 0.15;
-    const maxProfitRate2 = 0.2;
+    const maxProfitRate2 = 0.20;
     const maxProfitRate3 = 0.25;
-    const maxProfitRate4 = 0.35;
-    const maxProfitRate5 = 0.45;
+    const maxProfitRate4 = 0.30;
+    const maxProfitRate5 = 0.35;
 
     const snapshotList1 = await getAccountSnapshots(
       startDate,
@@ -112,7 +112,7 @@ class App extends PureComponent {
   }
 
   componentDidMount() {
-    this.updatePrices();
+    this.updateData();
   }
 
   render() {
